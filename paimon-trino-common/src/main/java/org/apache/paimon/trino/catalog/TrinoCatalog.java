@@ -34,7 +34,6 @@ import org.apache.paimon.schema.SchemaChange;
 import org.apache.paimon.security.SecurityContext;
 import org.apache.paimon.table.Table;
 import org.apache.paimon.trino.ClassLoaderUtils;
-import org.apache.paimon.trino.fileio.TrinoFileIOLoader;
 
 import io.trino.filesystem.TrinoFileSystem;
 import io.trino.filesystem.TrinoFileSystemFactory;
@@ -79,7 +78,10 @@ public class TrinoCatalog implements Catalog {
                                                 CatalogContext.create(
                                                         options,
                                                         configuration,
-                                                        new TrinoFileIOLoader(trinoFileSystem),
+                                                        // set this to null, make it back when
+                                                        // update to 427 and later
+                                                        null,
+                                                        // new TrinoFileIOLoader(trinoFileSystem),
                                                         null);
                                         try {
                                             SecurityContext.install(catalogContext);

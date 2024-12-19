@@ -39,7 +39,7 @@ under the License.
         <trino.version>427</trino.version>
         <slice.version>2.2</slice.version>
         <airlift.version>235</airlift.version>
-        <hadoop.apache.version>3.2.0-18</hadoop.apache.version>
+        <hadoop.apache.version>3.3.5-1</hadoop.apache.version>
     </properties>
 
     <dependencies>

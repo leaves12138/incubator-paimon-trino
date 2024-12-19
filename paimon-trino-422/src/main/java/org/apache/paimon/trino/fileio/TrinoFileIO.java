@@ -93,9 +93,6 @@ public class TrinoFileIO implements FileIO {
     public FileStatus[] listStatus(Path path) throws IOException {
         List<FileStatus> fileStatusList = new ArrayList<>();
         Location location = Location.of(path.toString());
-        // In version trino 420, trinoFileSystem could only search for files (directories don't
-        // count in files in trino)
-        // Therefore, this interface only return FileStatus those are file.
         if (trinoFileSystem.directoryExists(location).orElse(false)) {
             FileIterator fileIterator = trinoFileSystem.listFiles(location);
             while (fileIterator.hasNext()) {
