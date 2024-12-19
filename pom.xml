@@ -22,9 +22,7 @@ under the License.
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <modules>
-        <module>paimon-trino-420</module>
-        <module>paimon-trino-427</module>
-        <module>paimon-trino-440</module>
+        <module>paimon-trino-422</module>
         <module>paimon-trino-common</module>
     </modules>
 
@@ -37,7 +35,7 @@ under the License.
     <groupId>org.apache.paimon</groupId>
     <artifactId>paimon-trino</artifactId>
     <name>Paimon : Trino</name>
-    <version>0.8-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -59,7 +57,7 @@ under the License.
     </scm>
 
     <properties>
-        <paimon.version>0.8.0</paimon.version>
+        <paimon.version>1.0-SNAPSHOT</paimon.version>
         <target.java.version>11</target.java.version>
         <junit5.version>5.8.1</junit5.version>
         <slf4j.version>2.0.7</slf4j.version>

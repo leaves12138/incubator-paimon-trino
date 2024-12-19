@@ -120,7 +120,7 @@ public class TrinoMetadata implements ConnectorMetadata {
         }
         FileStoreTable fileStoreTable = (FileStoreTable) table;
         switch (fileStoreTable.bucketMode()) {
-            case FIXED:
+            case HASH_FIXED:
                 try {
                     return Optional.of(
                             new ConnectorTableLayout(
@@ -132,14 +132,14 @@ public class TrinoMetadata implements ConnectorMetadata {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            case DYNAMIC:
-            case GLOBAL_DYNAMIC:
+            case HASH_DYNAMIC:
+            case CROSS_PARTITION:
                 if (table.primaryKeys().isEmpty()) {
                     throw new IllegalArgumentException(
                             "Only primary-key table can support dynamic bucket.");
                 }
                 throw new IllegalArgumentException("Global dynamic bucket mode are not supported");
-            case UNAWARE:
+            case BUCKET_UNAWARE:
                 if (!table.primaryKeys().isEmpty()) {
                     throw new IllegalArgumentException(
                             "Only append table can support unaware bucket.");
@@ -251,7 +251,7 @@ public class TrinoMetadata implements ConnectorMetadata {
         }
         FileStoreTable fileStoreTable = (FileStoreTable) table;
         switch (fileStoreTable.bucketMode()) {
-            case FIXED:
+            case HASH_FIXED:
                 try {
                     return Optional.of(
                             new TrinoPartitioningHandle(
@@ -259,14 +259,14 @@ public class TrinoMetadata implements ConnectorMetadata {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            case DYNAMIC:
-            case GLOBAL_DYNAMIC:
+            case HASH_DYNAMIC:
+            case CROSS_PARTITION:
                 if (table.primaryKeys().isEmpty()) {
                     throw new IllegalArgumentException(
                             "Only primary-key table can support dynamic bucket.");
                 }
                 throw new IllegalArgumentException("Global dynamic bucket mode are not supported");
-            case UNAWARE:
+            case BUCKET_UNAWARE:
                 if (!table.primaryKeys().isEmpty()) {
                     throw new IllegalArgumentException(
                             "Only append table can support unaware bucket.");
@@ -295,7 +295,12 @@ public class TrinoMetadata implements ConnectorMetadata {
     @Override
     public boolean schemaExists(ConnectorSession session, String schemaName) {
         catalog.initSession(session);
-        return catalog.databaseExists(schemaName);
+        try {
+            catalog.getDatabase(schemaName);
+            return true;
+        } catch (Catalog.DatabaseNotExistException e) {
+            return false;
+        }
     }
 
     @Override
@@ -440,11 +445,14 @@ public class TrinoMetadata implements ConnectorMetadata {
             SchemaTableName tableName,
             Map<String, String> dynamicOptions) {
         catalog.initSession(session);
-        return catalog.tableExists(
-                        Identifier.create(tableName.getSchemaName(), tableName.getTableName()))
-                ? new TrinoTableHandle(
-                        tableName.getSchemaName(), tableName.getTableName(), dynamicOptions)
-                : null;
+        try {
+            catalog.getTable(
+                    Identifier.create(tableName.getSchemaName(), tableName.getTableName()));
+            return new TrinoTableHandle(
+                    tableName.getSchemaName(), tableName.getTableName(), dynamicOptions);
+        } catch (Catalog.TableNotExistException e) {
+            return null;
+        }
     }
 
     @Override

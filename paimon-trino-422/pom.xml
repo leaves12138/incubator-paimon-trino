@@ -25,18 +25,18 @@ under the License.
     <parent>
         <groupId>org.apache.paimon</groupId>
         <artifactId>paimon-trino</artifactId>
-        <version>0.8-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>paimon-trino-427</artifactId>
-    <name>Paimon : Trino : 427</name>
+    <artifactId>paimon-trino-422</artifactId>
+    <name>Paimon : Trino : 422</name>
 
     <properties>
         <target.java.version>17</target.java.version>
         <jdk.test.version>17</jdk.test.version>
-        <trino.version>427</trino.version>
+        <trino.version>422</trino.version>
         <airlift.version>235</airlift.version>
-        <slice.version>2.2</slice.version>
+        <slice.version>0.45</slice.version>
         <maven.toolchains.plugin.version>3.1.0</maven.toolchains.plugin.version>
     </properties>
 
@@ -51,6 +51,7 @@ under the License.
             <groupId>io.trino</groupId>
             <artifactId>trino-plugin-toolkit</artifactId>
             <version>${trino.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -64,24 +65,28 @@ under the License.
             <groupId>io.trino</groupId>
             <artifactId>trino-hdfs</artifactId>
             <version>${trino.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.trino</groupId>
             <artifactId>trino-hive</artifactId>
             <version>${trino.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.airlift</groupId>
             <artifactId>bootstrap</artifactId>
             <version>${airlift.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>io.airlift</groupId>
             <artifactId>configuration</artifactId>
             <version>${airlift.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
