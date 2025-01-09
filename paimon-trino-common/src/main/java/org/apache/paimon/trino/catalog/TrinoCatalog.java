@@ -27,8 +27,8 @@ import org.apache.paimon.catalog.Database;
 import org.apache.paimon.catalog.Identifier;
 import org.apache.paimon.catalog.PropertyChange;
 import org.apache.paimon.fs.FileIO;
-import org.apache.paimon.manifest.PartitionEntry;
 import org.apache.paimon.options.Options;
+import org.apache.paimon.partition.Partition;
 import org.apache.paimon.schema.Schema;
 import org.apache.paimon.schema.SchemaChange;
 import org.apache.paimon.security.SecurityContext;
@@ -195,8 +195,7 @@ public class TrinoCatalog implements Catalog {
     }
 
     @Override
-    public List<PartitionEntry> listPartitions(Identifier identifier)
-            throws TableNotExistException {
+    public List<Partition> listPartitions(Identifier identifier) throws TableNotExistException {
         return current.listPartitions(identifier);
     }
 
