@@ -397,15 +397,14 @@ public class TrinoMetadata implements ConnectorMetadata {
                         } else {
                             try {
                                 catalog.initSession(session);
-                                String path =
+                                Table table =
                                         catalog.getTable(
-                                                        new Identifier(
-                                                                tableName.getSchemaName(),
-                                                                tableName.getTableName()))
-                                                .options()
-                                                .get("path");
+                                                new Identifier(
+                                                        tableName.getSchemaName(),
+                                                        tableName.getTableName()));
+                                String path = table.options().get("path");
 
-                                if (catalog.fileIO()
+                                if (table.fileIO()
                                         .exists(
                                                 new Path(
                                                         path
