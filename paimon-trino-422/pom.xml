@@ -174,7 +174,7 @@ under the License.
                                     </excludes>
                                 </filter>
                             </filters>
-                            <finalName>paimon-trino-422-1.0-plugin</finalName>
+                            <finalName>paimon-trino-422-1.2-plugin</finalName>
                         </configuration>
                     </execution>
                 </executions>
