@@ -19,11 +19,11 @@
 package org.apache.paimon.trino;
 
 import org.apache.paimon.CoreOptions;
+import org.apache.paimon.bucket.DefaultBucketFunction;
 import org.apache.paimon.codegen.CodeGenUtils;
 import org.apache.paimon.codegen.Projection;
 import org.apache.paimon.data.BinaryRow;
 import org.apache.paimon.schema.TableSchema;
-import org.apache.paimon.table.sink.KeyAndBucketExtractor;
 import org.apache.paimon.types.RowKind;
 
 import io.trino.spi.Page;
@@ -44,6 +44,7 @@ public class FixedBucketTableShuffleFunction implements BucketFunction {
     private final int bucketCount;
     private final boolean isRowId;
     private final Projection pkProjection;
+    private final DefaultBucketFunction bucketFunction;
 
     public FixedBucketTableShuffleFunction(
             List<Type> partitionChannelTypes,
@@ -58,6 +59,7 @@ public class FixedBucketTableShuffleFunction implements BucketFunction {
         this.isRowId =
                 partitionChannelTypes.size() == 1
                         && partitionChannelTypes.get(0) instanceof RowType;
+        this.bucketFunction = new DefaultBucketFunction();
     }
 
     @Override
@@ -79,9 +81,7 @@ public class FixedBucketTableShuffleFunction implements BucketFunction {
 
         TrinoRow trinoRow = new TrinoRow(page.getSingleValuePage(position), RowKind.INSERT);
         BinaryRow pk = pkProjection.apply(trinoRow);
-        int bucket =
-                KeyAndBucketExtractor.bucket(
-                        KeyAndBucketExtractor.bucketKeyHashCode(pk), bucketCount);
+        int bucket = bucketFunction.bucket(pk, bucketCount);
         return bucket % workerCount;
     }
 }

@@ -29,6 +29,8 @@ import org.apache.paimon.catalog.CatalogLoader;
 import org.apache.paimon.catalog.Database;
 import org.apache.paimon.catalog.Identifier;
 import org.apache.paimon.catalog.PropertyChange;
+import org.apache.paimon.function.Function;
+import org.apache.paimon.function.FunctionChange;
 import org.apache.paimon.options.Options;
 import org.apache.paimon.partition.Partition;
 import org.apache.paimon.partition.PartitionStatistics;
@@ -124,8 +126,9 @@ public class TrinoCatalog implements Catalog {
     }
 
     @Override
-    public PagedList<String> listDatabasesPaged(@Nullable Integer integer, @Nullable String s) {
-        return current.listDatabasesPaged(integer, s);
+    public PagedList<String> listDatabasesPaged(
+            @Nullable Integer integer, @Nullable String s, @Nullable String s1) {
+        return current.listDatabasesPaged(integer, s, s1);
     }
 
     @Override
@@ -163,16 +166,16 @@ public class TrinoCatalog implements Catalog {
 
     @Override
     public PagedList<String> listTablesPaged(
-            String s, @Nullable Integer integer, @Nullable String s1)
+            String s, @Nullable Integer integer, @Nullable String s1, @Nullable String s2)
             throws DatabaseNotExistException {
-        return current.listTablesPaged(s, integer, s1);
+        return current.listTablesPaged(s, integer, s1, s2);
     }
 
     @Override
     public PagedList<Table> listTableDetailsPaged(
-            String s, @Nullable Integer integer, @Nullable String s1)
+            String s, @Nullable Integer integer, @Nullable String s1, @Nullable String s2)
             throws DatabaseNotExistException {
-        return current.listTableDetailsPaged(s, integer, s1);
+        return current.listTableDetailsPaged(s, integer, s1, s2);
     }
 
     @Override
@@ -205,9 +208,12 @@ public class TrinoCatalog implements Catalog {
 
     @Override
     public PagedList<Partition> listPartitionsPaged(
-            Identifier identifier, @Nullable Integer integer, @Nullable String s)
+            Identifier identifier,
+            @Nullable Integer integer,
+            @Nullable String s,
+            @Nullable String s1)
             throws TableNotExistException {
-        return current.listPartitionsPaged(identifier, integer, s);
+        return current.listPartitionsPaged(identifier, integer, s, s1);
     }
 
     @Override
@@ -222,15 +228,31 @@ public class TrinoCatalog implements Catalog {
 
     @Override
     public boolean commitSnapshot(
-            Identifier identifier, Snapshot snapshot, List<PartitionStatistics> list)
+            Identifier identifier,
+            @Nullable String s,
+            Snapshot snapshot,
+            List<PartitionStatistics> list)
             throws TableNotExistException {
-        return current.commitSnapshot(identifier, snapshot, list);
+        return current.commitSnapshot(identifier, s, snapshot, list);
     }
 
     @Override
     public Optional<TableSnapshot> loadSnapshot(Identifier identifier)
             throws TableNotExistException {
         return current.loadSnapshot(identifier);
+    }
+
+    @Override
+    public Optional<Snapshot> loadSnapshot(Identifier identifier, String s)
+            throws TableNotExistException {
+        return current.loadSnapshot(identifier, s);
+    }
+
+    @Override
+    public PagedList<Snapshot> listSnapshotsPaged(
+            Identifier identifier, @Nullable Integer integer, @Nullable String s)
+            throws TableNotExistException {
+        return current.listSnapshotsPaged(identifier, integer, s);
     }
 
     @Override
@@ -275,6 +297,40 @@ public class TrinoCatalog implements Catalog {
     public void alterPartitions(Identifier identifier, List<PartitionStatistics> list)
             throws TableNotExistException {
         current.alterPartitions(identifier, list);
+    }
+
+    @Override
+    public List<String> listFunctions(String s) throws DatabaseNotExistException {
+        return current.listFunctions(s);
+    }
+
+    @Override
+    public Function getFunction(Identifier identifier) throws FunctionNotExistException {
+        return current.getFunction(identifier);
+    }
+
+    @Override
+    public void createFunction(Identifier identifier, Function function, boolean b)
+            throws FunctionAlreadyExistException, DatabaseNotExistException {
+        current.createFunction(identifier, function, b);
+    }
+
+    @Override
+    public void dropFunction(Identifier identifier, boolean b) throws FunctionNotExistException {
+        current.dropFunction(identifier, b);
+    }
+
+    @Override
+    public void alterFunction(Identifier identifier, List<FunctionChange> list, boolean b)
+            throws FunctionNotExistException, DefinitionAlreadyExistException,
+                    DefinitionNotExistException {
+        current.alterFunction(identifier, list, b);
+    }
+
+    @Override
+    public List<String> authTableQuery(Identifier identifier, @Nullable List<String> list)
+            throws TableNotExistException {
+        return current.authTableQuery(identifier, list);
     }
 
     @Override
