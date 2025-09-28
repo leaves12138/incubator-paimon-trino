@@ -166,16 +166,24 @@ public class TrinoCatalog implements Catalog {
 
     @Override
     public PagedList<String> listTablesPaged(
-            String s, @Nullable Integer integer, @Nullable String s1, @Nullable String s2)
+            String s,
+            @Nullable Integer maxResults,
+            @Nullable String pageToken,
+            @Nullable String tableNamePattern,
+            @Nullable String tableType)
             throws DatabaseNotExistException {
-        return current.listTablesPaged(s, integer, s1, s2);
+        return current.listTablesPaged(s, maxResults, pageToken, tableNamePattern, tableType);
     }
 
     @Override
     public PagedList<Table> listTableDetailsPaged(
-            String s, @Nullable Integer integer, @Nullable String s1, @Nullable String s2)
+            String s,
+            @Nullable Integer maxResults,
+            @Nullable String pageToken,
+            @Nullable String tableNamePattern,
+            @Nullable String tableType)
             throws DatabaseNotExistException {
-        return current.listTableDetailsPaged(s, integer, s1, s2);
+        return current.listTableDetailsPaged(s, maxResults, pageToken, tableNamePattern, tableType);
     }
 
     @Override

@@ -19,6 +19,7 @@
 package org.apache.paimon.trino;
 
 import org.apache.paimon.data.BinaryString;
+import org.apache.paimon.data.Blob;
 import org.apache.paimon.data.Decimal;
 import org.apache.paimon.data.InternalArray;
 import org.apache.paimon.data.InternalMap;
@@ -164,6 +165,12 @@ public class TrinoRow implements InternalRow, Serializable {
     @Override
     public Variant getVariant(int i) {
         // TODO: support variant
+        return null;
+    }
+
+    @Override
+    public Blob getBlob(int i) {
+        // TODO: support blob
         return null;
     }
 

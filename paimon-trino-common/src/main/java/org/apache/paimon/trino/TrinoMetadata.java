@@ -133,7 +133,7 @@ public class TrinoMetadata implements ConnectorMetadata {
                     throw new RuntimeException(e);
                 }
             case HASH_DYNAMIC:
-            case CROSS_PARTITION:
+            case KEY_DYNAMIC:
                 if (table.primaryKeys().isEmpty()) {
                     throw new IllegalArgumentException(
                             "Only primary-key table can support dynamic bucket.");
@@ -260,7 +260,7 @@ public class TrinoMetadata implements ConnectorMetadata {
                     throw new RuntimeException(e);
                 }
             case HASH_DYNAMIC:
-            case CROSS_PARTITION:
+            case KEY_DYNAMIC:
                 if (table.primaryKeys().isEmpty()) {
                     throw new IllegalArgumentException(
                             "Only primary-key table can support dynamic bucket.");
