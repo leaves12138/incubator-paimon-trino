@@ -512,6 +512,184 @@ public abstract class TestTrinoITCase extends AbstractTestQueryFramework {
                                     ""));
         }
 
+        {
+            Path tablePath = new Path(warehouse, "default.db/t104");
+            RowType rowType =
+                    RowType.of(
+                            new DataField(0, "server_recv_time", DataTypes.STRING(), "数据入库的时间"),
+                            new DataField(1, "guid", DataTypes.STRING(), "用户id"),
+                            new DataField(2, "mcc", DataTypes.STRING(), "移动国家码"),
+                            new DataField(3, "mnc", DataTypes.STRING(), "移动网络码"),
+                            new DataField(4, "andr_id", DataTypes.STRING(), "Android"),
+                            new DataField(5, "devc_brand", DataTypes.STRING(), "设备品牌"),
+                            new DataField(6, "ori_evnt_name", DataTypes.STRING(), "原始事件名"),
+                            new DataField(7, "evnt_time", DataTypes.STRING(), "终端和服务端校正的时间"),
+                            new DataField(8, "gg_ad_id", DataTypes.STRING(), "谷歌的 gaid"),
+                            new DataField(9, "qua", DataTypes.STRING(), "qua 内容"),
+                            new DataField(10, "qv", DataTypes.STRING(), "qua版本"),
+                            new DataField(11, "pltfm", DataTypes.STRING(), "设备平台（Andr,IOS)"),
+                            new DataField(12, "prdckt", DataTypes.STRING(), "产品名"),
+                            new DataField(13, "pkg_name", DataTypes.STRING(), "包名"),
+                            new DataField(14, "app_vern", DataTypes.STRING(), "app版本号"),
+                            new DataField(15, "co", DataTypes.STRING(), "浏览器内核版本"),
+                            new DataField(16, "chid", DataTypes.STRING(), "当前渠道号"),
+                            new DataField(17, "acid", DataTypes.STRING(), "激活渠道号"),
+                            new DataField(18, "mbl_mdl", DataTypes.STRING(), "机型代号"),
+                            new DataField(19, "dn", DataTypes.STRING(), "机型名"),
+                            new DataField(20, "rslv_rto", DataTypes.STRING(), "分辨率"),
+                            new DataField(21, "os_vern", DataTypes.STRING(), "操作系统版本"),
+                            new DataField(22, "api", DataTypes.STRING(), "操作系统api版本"),
+                            new DataField(23, "cntry", DataTypes.STRING(), "国家"),
+                            new DataField(24, "lng", DataTypes.STRING(), "语言"),
+                            new DataField(25, "biz_value", DataTypes.STRING(), "业务上传内容值"),
+                            new DataField(
+                                    26,
+                                    "biz_value_map",
+                                    DataTypes.MAP(DataTypes.STRING(), DataTypes.STRING()),
+                                    "业务上传内容值map"),
+                            new DataField(
+                                    27,
+                                    "qua_map",
+                                    DataTypes.MAP(DataTypes.STRING(), DataTypes.STRING()),
+                                    "qua内容值map"),
+                            new DataField(28, "ori_lng", DataTypes.STRING(), "原始的语言"),
+                            new DataField(29, "ori_app_vern", DataTypes.STRING(), "原始的app版本"),
+                            new DataField(30, "evnt_app_vern", DataTypes.STRING(), "事件上报时的app 版本"),
+                            new DataField(
+                                    31, "ori_evnt_app_vern", DataTypes.STRING(), "原始事件上报的app版本"),
+                            new DataField(
+                                    32,
+                                    "network_type",
+                                    DataTypes.STRING(),
+                                    "0:无网,1:wifi,2:2G,3:3G,4:4G"),
+                            new DataField(33, "network_sub_type", DataTypes.STRING(), "网络子类型"),
+                            new DataField(
+                                    34, "launch_chnnl_id", DataTypes.STRING(), "启动时的channel id"),
+                            new DataField(35, "launch_posid", DataTypes.STRING(), "启动时的 posid"),
+                            new DataField(36, "action_name", DataTypes.STRING(), "动作名称"),
+                            new DataField(
+                                    37,
+                                    "biz_value_extra",
+                                    DataTypes.STRING(),
+                                    "业务扩展数据(不同的业务打点为json,或者&=分割或者单一字段)"),
+                            new DataField(38, "login_time", DataTypes.STRING(), "启动时间"),
+                            new DataField(39, "session_id", DataTypes.STRING(), "会话sessionid"),
+                            new DataField(40, "un_region_en", DataTypes.STRING(), "国家所在大洲（联合国）"),
+                            new DataField(
+                                    41, "sub_un_region_en", DataTypes.STRING(), "国家所在大洲子区域（联合国）"),
+                            new DataField(
+                                    42,
+                                    "unicef_region_en",
+                                    DataTypes.STRING(),
+                                    "国家所在文化区域（联合国儿童基金会）"),
+                            new DataField(
+                                    43,
+                                    "sub_unicef_region_en",
+                                    DataTypes.STRING(),
+                                    "国家所在文化子区域（联合国儿童基金会）"),
+                            new DataField(
+                                    44,
+                                    "is_lng_enable",
+                                    DataTypes.STRING(),
+                                    "是否语言可纳入分析计算 1 是，0否，UNKNOWN 未知"),
+                            new DataField(
+                                    45,
+                                    "is_cntry_enable",
+                                    DataTypes.STRING(),
+                                    "是否国家可纳入分析计算 1 是，0否，UNKNOWN 未知"),
+                            new DataField(46, "server_ts", DataTypes.STRING(), "数据入库的时间戳"),
+                            new DataField(47, "event_ts", DataTypes.STRING(), "终端和服务端校正的时间戳"),
+                            new DataField(48, "client_event_ts", DataTypes.STRING(), "终端手机时间戳"),
+                            new DataField(49, "ds", DataTypes.BIGINT(), "分区字段"));
+            new SchemaManager(LocalFileIO.create(), tablePath)
+                    .createTable(
+                            new Schema(
+                                    rowType.getFields(),
+                                    Arrays.asList("ds"),
+                                    Collections.emptyList(),
+                                    new HashMap<>(),
+                                    ""));
+
+            FileStoreTable table = FileStoreTableFactory.create(LocalFileIO.create(), tablePath);
+            InnerTableWrite writer = table.newWrite("user");
+            writer.withIOManager(new IOManagerImpl("/tmp"));
+            InnerTableCommit commit = table.newCommit("user");
+            GenericRow record =
+                    GenericRow.of(
+                            BinaryString.fromString("2024-01-15 10:30:00"), // server_recv_time
+                            BinaryString.fromString("8fab6f3f5f31e8e13b2dc841377988cb"), // guid
+                            BinaryString.fromString("460"), // mcc
+                            BinaryString.fromString("00"), // mnc
+                            BinaryString.fromString("android_device_001"), // andr_id
+                            BinaryString.fromString("Samsung"), // devc_brand
+                            BinaryString.fromString("page_view"), // ori_evnt_name
+                            BinaryString.fromString("2024-01-15 10:29:45"), // evnt_time
+                            BinaryString.fromString("gaid_123456789"), // gg_ad_id
+                            BinaryString.fromString(
+                                    "Mozilla/5.0 (Linux; Android 12; SM-G991B) AppleWebKit/537.36"), // qua
+                            BinaryString.fromString("1.0"), // qv
+                            BinaryString.fromString("Andr"), // pltfm
+                            BinaryString.fromString("MyApp"), // prdckt
+                            BinaryString.fromString("com.example.myapp"), // pkg_name
+                            BinaryString.fromString("19.5"), // app_vern
+                            BinaryString.fromString("Chrome/91.0.4472.120"), // co
+                            BinaryString.fromString("channel_001"), // chid
+                            BinaryString.fromString("channel_001"), // acid
+                            BinaryString.fromString("SM-G991B"), // mbl_mdl
+                            BinaryString.fromString("Galaxy S21"), // dn
+                            BinaryString.fromString("1080x2400"), // rslv_rto
+                            BinaryString.fromString("Android 12"), // os_vern
+                            BinaryString.fromString("31"), // api
+                            BinaryString.fromString("CN"), // cntry
+                            BinaryString.fromString("zh-CN"), // lng
+                            BinaryString.fromString(
+                                    "{\"page\":\"home\",\"action\":\"click\"}"), // biz_value
+                            new GenericMap(
+                                    Map.of(
+                                            BinaryString.fromString("page"),
+                                                    BinaryString.fromString("home"),
+                                            BinaryString.fromString("action"),
+                                                    BinaryString.fromString("click"),
+                                            BinaryString.fromString("category"),
+                                                    BinaryString.fromString(
+                                                            "navigation"))), // biz_value_map
+                            new GenericMap(
+                                    Map.of(
+                                            BinaryString.fromString("browser"),
+                                                    BinaryString.fromString("Chrome"),
+                                            BinaryString.fromString("version"),
+                                                    BinaryString.fromString("91"),
+                                            BinaryString.fromString("engine"),
+                                                    BinaryString.fromString("WebKit"))), // qua_map
+                            BinaryString.fromString("zh"), // ori_lng
+                            BinaryString.fromString("1.2.0"), // ori_app_vern
+                            BinaryString.fromString("1.2.3"), // evnt_app_vern
+                            BinaryString.fromString("1.2.3"), // ori_evnt_app_vern
+                            BinaryString.fromString("1"), // network_type (wifi)
+                            BinaryString.fromString("WIFI"), // network_sub_type
+                            BinaryString.fromString("channel_001"), // launch_chnnl_id
+                            BinaryString.fromString("pos_001"), // launch_posid
+                            BinaryString.fromString("click"), // action_name
+                            BinaryString.fromString(
+                                    "{\"extra\":\"data\",\"source\":\"button\"}"), // biz_value_extra
+                            BinaryString.fromString("2024-01-15 10:29:00"), // login_time
+                            BinaryString.fromString("session_123456"), // session_id
+                            BinaryString.fromString("Asia"), // un_region_en
+                            BinaryString.fromString("Eastern Asia"), // sub_un_region_en
+                            BinaryString.fromString("East Asia and Pacific"), // unicef_region_en
+                            BinaryString.fromString("China"), // sub_unicef_region_en
+                            BinaryString.fromString("1"), // is_lng_enable
+                            BinaryString.fromString("1"), // is_cntry_enable
+                            BinaryString.fromString("1705302600000"), // server_ts
+                            BinaryString.fromString("1705302585000"), // event_ts
+                            BinaryString.fromString("1705302580000"), // client_event_ts
+                            20251002L // ds (partition field - BIGINT)
+                            );
+
+            writer.write(record);
+            commit.commit(writer.prepareCommit());
+        }
+
         DistributedQueryRunner queryRunner = null;
         try {
             queryRunner =
@@ -527,6 +705,37 @@ public abstract class TestTrinoITCase extends AbstractTestQueryFramework {
             closeAllSuppress(e, queryRunner);
             throw e;
         }
+    }
+
+    @Test
+    public void testsss() {
+        //        String s = sql("SELECT\n" +
+        //                "    ds\n" +
+        //                "  , guid\n" +
+        //                "  , ma_channel_id\n" +
+        //                "  , ma_pos_id\n" +
+        //                "  , is_ma_first_launch\n" +
+        //                "    FROM paimon.default.t104\n" +
+        //                "    WHERE ds = 20250930\n" +
+        //                "      AND ma_prdckt = 'football'\n" +
+        //                "      AND CAST(app_version AS DOUBLE) >= 19.5 limit 10");
+        String s =
+                sql(
+                        "SELECT\n"
+                                + "evnt_time\n"
+                                + ", action_name , element_at(biz_value_map, 'resourceId')\n"
+                                + "AS resourceld\n"
+                                + ", element_at(biz_value_map, 'pre_loading_time') AS pre_loading_time , element_at(biz_value_map, 'item_position')\n"
+                                + "AS item_position\n"
+                                + ", element_at(biz_value_map, 'actual_progress')\n"
+                                + "AS actual_progress\n"
+                                + "FROM paimon.default.t104\n"
+                                + "WHERE ds = 20251002\n"
+                                + "AND app_vern = '19.5'\n"
+                                + "AND element_at(biz_value_map, 'resourceType') = '5'\n"
+                                + "AND guid = '8fab6f3f5f31e8e13b2dc841377988cb'\n"
+                                + "ORDER BY evnt_time");
+        System.out.println(s);
     }
 
     private static SimpleTableTestHelper createTestHelper(Path tablePath) throws Exception {

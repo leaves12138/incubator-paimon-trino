@@ -22,8 +22,6 @@ import org.apache.paimon.data.BinaryString;
 import org.apache.paimon.data.Decimal;
 import org.apache.paimon.data.Timestamp;
 import org.apache.paimon.fileindex.FileIndexOptions;
-import org.apache.paimon.predicate.In;
-import org.apache.paimon.predicate.LeafPredicate;
 import org.apache.paimon.predicate.Predicate;
 import org.apache.paimon.predicate.PredicateBuilder;
 import org.apache.paimon.types.RowType;
@@ -159,33 +157,11 @@ public class TrinoFilterConverter {
         }
 
         // TODO support structural types
-        if (type instanceof ArrayType || type instanceof io.trino.spi.type.RowType) {
+        if (type instanceof ArrayType
+                || type instanceof io.trino.spi.type.RowType
+                || type instanceof MapType) {
             // Fail fast. Ignoring expression could lead to data loss in case of deletions.
             throw new UnsupportedOperationException();
-        }
-
-        if (type instanceof MapType) {
-            List<Range> orderedRanges = domain.getValues().getRanges().getOrderedRanges();
-            List<Object> values = new ArrayList<>();
-            List<Predicate> predicates = new ArrayList<>();
-            for (Range range : orderedRanges) {
-                if (range.isSingleValue()) {
-                    values.add(
-                            getLiteralValue(
-                                    ((MapType) type).getValueType(), range.getLowBoundedValue()));
-                }
-            }
-            if (!values.isEmpty()) {
-                Predicate predicate =
-                        new LeafPredicate(
-                                In.INSTANCE,
-                                TrinoTypeUtils.toPaimonType(type),
-                                columnIndex,
-                                field,
-                                values);
-                predicates.add(predicate);
-            }
-            return or(predicates);
         }
 
         if (type.isOrderable()) {
