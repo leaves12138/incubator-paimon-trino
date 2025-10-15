@@ -153,6 +153,9 @@ public class TrinoFilterExtractor {
         switch (functionName) {
             case TRINO_MAP_ELEMENT_AT_FUNCTION_NAME:
                 {
+                    if (elementAtExpression.getArguments().get(0) instanceof Call) {
+                        return Collections.emptyMap();
+                    }
                     Variable columnExpression =
                             (Variable) elementAtExpression.getArguments().get(0);
                     Constant columnKey = (Constant) elementAtExpression.getArguments().get(1);
