@@ -146,6 +146,9 @@ public class TrinoFilterExtractor {
     private static Map<TrinoColumnHandle, Domain> handleExpressionEqualOrIn(
             Map<String, ColumnHandle> assignments, Call expression, boolean inClause) {
 
+        if (!(expression.getArguments().get(0) instanceof Call)) {
+            return Collections.emptyMap();
+        }
         Call elementAtExpression = (Call) expression.getArguments().get(0);
 
         String functionName = elementAtExpression.getFunctionName().getName();
