@@ -149,6 +149,9 @@ public class TrinoFilterExtractor {
         if (!(expression.getArguments().get(0) instanceof Call)) {
             return Collections.emptyMap();
         }
+        if (!(expression.getArguments().get(1) instanceof Constant)) {
+            return Collections.emptyMap();
+        }
         Call elementAtExpression = (Call) expression.getArguments().get(0);
 
         String functionName = elementAtExpression.getFunctionName().getName();
