@@ -176,7 +176,7 @@ public class TrinoPageSourceProvider implements ConnectorPageSourceProvider {
         try {
             Split paimonSplit = split.decodeSplit();
             Optional<List<RawFile>> optionalRawFiles = paimonSplit.convertToRawFiles();
-            if (checkRawFile(optionalRawFiles)) {
+            if (checkRawFile(fileSystem, optionalRawFiles)) {
                 FileStoreTable fileStoreTable = (FileStoreTable) table;
                 boolean readIndex = fileStoreTable.coreOptions().fileIndexReadEnabled();
 
@@ -290,19 +290,28 @@ public class TrinoPageSourceProvider implements ConnectorPageSourceProvider {
                 .collect(Collectors.toList());
     }
 
-    private boolean checkRawFile(Optional<List<RawFile>> optionalRawFiles) {
-        return optionalRawFiles.isPresent() && canUseTrinoPageSource(optionalRawFiles.get());
+    private boolean checkRawFile(
+            TrinoFileSystem fileSystem, Optional<List<RawFile>> optionalRawFiles) {
+        return optionalRawFiles.isPresent()
+                && canUseTrinoPageSource(fileSystem, optionalRawFiles.get());
     }
 
     // only support orc yet.
     // TODO: support parquet and avro
-    private boolean canUseTrinoPageSource(List<RawFile> rawFiles) {
-        for (RawFile rawFile : rawFiles) {
-            if (!rawFile.format().equals("orc")) {
-                return false;
+    private boolean canUseTrinoPageSource(TrinoFileSystem fileSystem, List<RawFile> rawFiles) {
+        try {
+            for (RawFile rawFile : rawFiles) {
+                if (!rawFile.format().equals("orc")) {
+                    return false;
+                }
+                TrinoInputFile inputFile = fileSystem.newInputFile(Location.of(rawFile.path()));
+                // check if the filesystem could actually read the file
+                inputFile.length();
             }
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        return true;
     }
 
     // map the table schema column names to data schema column names
