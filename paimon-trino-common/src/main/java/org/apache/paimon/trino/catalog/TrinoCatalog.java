@@ -34,6 +34,7 @@ import org.apache.paimon.function.FunctionChange;
 import org.apache.paimon.options.Options;
 import org.apache.paimon.partition.Partition;
 import org.apache.paimon.partition.PartitionStatistics;
+import org.apache.paimon.rest.responses.GetTagResponse;
 import org.apache.paimon.schema.Schema;
 import org.apache.paimon.schema.SchemaChange;
 import org.apache.paimon.security.SecurityContext;
@@ -41,6 +42,7 @@ import org.apache.paimon.table.Instant;
 import org.apache.paimon.table.Table;
 import org.apache.paimon.table.TableSnapshot;
 import org.apache.paimon.trino.ClassLoaderUtils;
+import org.apache.paimon.utils.SnapshotNotExistException;
 
 import io.trino.filesystem.TrinoFileSystem;
 import io.trino.filesystem.TrinoFileSystemFactory;
@@ -287,6 +289,32 @@ public class TrinoCatalog implements Catalog {
     @Override
     public List<String> listBranches(Identifier identifier) throws TableNotExistException {
         return current.listBranches(identifier);
+    }
+
+    @Override
+    public GetTagResponse getTag(Identifier identifier, String s)
+            throws TableNotExistException, TagNotExistException {
+        return current.getTag(identifier, s);
+    }
+
+    @Override
+    public void createTag(
+            Identifier identifier, String s, @Nullable Long aLong, @Nullable String s1, boolean b)
+            throws TableNotExistException, SnapshotNotExistException, TagAlreadyExistException {
+        current.createTag(identifier, s, aLong, s1, b);
+    }
+
+    @Override
+    public PagedList<String> listTagsPaged(
+            Identifier identifier, @Nullable Integer integer, @Nullable String s)
+            throws TableNotExistException {
+        return current.listTagsPaged(identifier, integer, s);
+    }
+
+    @Override
+    public void deleteTag(Identifier identifier, String s)
+            throws TableNotExistException, TagNotExistException {
+        current.deleteTag(identifier, s);
     }
 
     @Override
