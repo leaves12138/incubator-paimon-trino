@@ -271,6 +271,11 @@ public class TrinoCatalog implements Catalog {
     }
 
     @Override
+    public void rollbackTo(Identifier identifier, Instant instant, @Nullable Long aLong) throws TableNotExistException {
+        current.rollbackTo(identifier, instant, aLong);
+    }
+
+    @Override
     public void createBranch(Identifier identifier, String s, @Nullable String s1)
             throws TableNotExistException, BranchAlreadyExistException, TagNotExistException {
         current.createBranch(identifier, s, s1);
