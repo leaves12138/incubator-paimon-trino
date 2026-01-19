@@ -271,7 +271,8 @@ public class TrinoCatalog implements Catalog {
     }
 
     @Override
-    public void rollbackTo(Identifier identifier, Instant instant, @Nullable Long aLong) throws TableNotExistException {
+    public void rollbackTo(Identifier identifier, Instant instant, @Nullable Long aLong)
+            throws TableNotExistException {
         current.rollbackTo(identifier, instant, aLong);
     }
 
@@ -311,9 +312,12 @@ public class TrinoCatalog implements Catalog {
 
     @Override
     public PagedList<String> listTagsPaged(
-            Identifier identifier, @Nullable Integer integer, @Nullable String s)
+            Identifier identifier,
+            @Nullable Integer integer,
+            @Nullable String s,
+            @Nullable String s1)
             throws TableNotExistException {
-        return current.listTagsPaged(identifier, integer, s);
+        return current.listTagsPaged(identifier, integer, s, s1);
     }
 
     @Override

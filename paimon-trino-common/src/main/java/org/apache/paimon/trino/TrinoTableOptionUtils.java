@@ -113,12 +113,6 @@ public class TrinoTableOptionUtils {
                 return CoreOptions.ChangelogProducer.class;
             case "StartupMode":
                 return CoreOptions.StartupMode.class;
-            case "LogConsistency":
-                return CoreOptions.LogConsistency.class;
-            case "LogChangelogMode":
-                return CoreOptions.LogChangelogMode.class;
-            case "StreamingReadMode":
-                return CoreOptions.StreamingReadMode.class;
             default:
                 return null;
         }
